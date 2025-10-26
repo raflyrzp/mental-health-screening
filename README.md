@@ -1,4 +1,4 @@
-# Skrining Kesehatan Mental — Aplikasi Web (Vite + Tailwind)
+# Skrining Kesehatan Mental
 
 Aplikasi web sederhana untuk skrining dini kesehatan mental pada dewasa awal. Pengguna menjawab pertanyaan Ya/Tidak satu per satu. Setelah selesai, aplikasi menampilkan kesimpulan awal dan saran yang relevan. Jika ada tanda bahaya (misalnya pikiran untuk menyakiti diri atau indikasi kondisi berat), aplikasi menampilkan peringatan keselamatan.
 
