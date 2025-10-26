@@ -2,7 +2,7 @@
 
 Aplikasi web sederhana untuk skrining dini kesehatan mental pada dewasa awal. Pengguna menjawab pertanyaan Ya/Tidak satu per satu. Setelah selesai, aplikasi menampilkan kesimpulan awal dan saran yang relevan. Jika ada tanda bahaya (misalnya pikiran untuk menyakiti diri atau indikasi kondisi berat), aplikasi menampilkan peringatan keselamatan.
 
-Catatan: Teks yang tampil kepada pengguna di dalam aplikasi tidak menggunakan istilah teknis (tidak menampilkan kode gejala, kode kondisi, atau istilah metode). Semua proses berjalan di browser pengguna (lokal), tidak mengirim data ke server.
+Catatan: Semua proses berjalan di browser pengguna (lokal), tidak mengirim data ke server.
 
 ---
 
@@ -50,15 +50,8 @@ npm -v
 - Jika Anda sudah tahu URL repo Anda, ganti `{owner}` dan `{repo}` sesuai milik Anda.
 
 ```bash
-git clone https://github.com/{owner}/{repo}.git
-cd {repo}
-```
-
-Contoh (ganti sesuai akun/organisasi Anda):
-
-```bash
-git clone https://github.com/owner/mental-health-screening-forward-chaining.git
-cd mental-health-screening-forward-chaining
+git clone https://github.com/raflyrzp/mental-health-screening.git
+cd mental-health-screening
 ```
 
 2. Instal dependensi
@@ -96,7 +89,7 @@ npm run preview
 1. Klik tombol “Ya” atau “Tidak” pada setiap pertanyaan.
 2. Lanjutkan hingga pertanyaan terakhir (indikator progres akan mencapai 100%).
 3. Setelah selesai, halaman hasil menampilkan:
-   - Kesimpulan awal (tanpa istilah teknis).
+   - Kesimpulan awal.
    - Saran yang relevan dengan kondisi Anda.
    - Peringatan keselamatan jika diperlukan.
 4. Gunakan tombol “Mulai Ulang” untuk mengulang pengisian dari awal.

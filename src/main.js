@@ -182,7 +182,6 @@ const $warningBlock = document.getElementById("warningBlock");
 const $btnRestart = document.getElementById("btnRestart");
 const $safetyBanner = document.getElementById("safetyBanner");
 
-// Render pertanyaan saat ini
 function renderQuestion() {
   const total = SYMPTOMS.length;
   if (currentIndex >= total) {
@@ -196,10 +195,11 @@ function renderQuestion() {
   $progressBar.style.width = `${prog}%`;
 }
 
-// Cek dan tampilkan banner keselamatan jika perlu (G017/G026 = Ya)
+function isRisky() {
+  return answers["G017"] === true || answers["G026"] === true;
+}
 function updateSafetyBanner() {
-  const risky = answers["G017"] === true || answers["G026"] === true;
-  $safetyBanner.classList.toggle("hidden", !risky);
+  $safetyBanner.classList.toggle("hidden", !isRisky());
 }
 
 // Proses jawaban
@@ -234,15 +234,36 @@ function finalize() {
   $diagnosisBlock.innerHTML = "";
 
   if (!outcome.matched) {
-    $diagnosisBlock.innerHTML = `
-      <div>
-        <h3 class="font-semibold mb-1">Kesimpulan</h3>
-        <p><span class="tag">Belum ada indikasi yang jelas</span></p>
-        <p class="text-sm text-slate-300 mt-2">Berdasarkan jawaban Anda, belum terdapat pola yang cukup kuat. Jika Anda tetap merasa terganggu, pertimbangkan untuk berkonsultasi dengan tenaga profesional.</p>
-      </div>
-    `;
-    $warningBlock.classList.add("hidden");
-    renderAdviceGeneric();
+    if (!isRisky()) {
+      $diagnosisBlock.innerHTML = `
+        <div>
+          <h3 class="font-semibold mb-1">Kesimpulan</h3>
+          <p><span class="tag tag-success">Kategori Aman</span></p>
+          <p class="text-sm text-slate-300 mt-2">Saat ini tidak terlihat tanda yang mengkhawatirkan. Tetap jaga kesehatan mental Anda dengan kebiasaan yang baik.</p>
+        </div>
+      `;
+      $warningBlock.classList.add("hidden");
+      renderAdviceSafe();
+    } else {
+      $diagnosisBlock.innerHTML = `
+        <div>
+          <h3 class="font-semibold mb-1">Kesimpulan</h3>
+          <p><span class="tag">Perlu Perhatian</span></p>
+          <p class="text-sm text-slate-300 mt-2">Beberapa jawaban Anda menunjukkan perlunya perhatian terhadap keselamatan. Harap pertimbangkan untuk mencari bantuan.</p>
+        </div>
+      `;
+      $warningBlock.classList.remove("hidden");
+      $warningBlock.innerHTML = `
+        <h3 class="font-semibold mb-1">Peringatan</h3>
+        <p>Jika Anda memiliki pikiran untuk menyakiti diri, keselamatan Anda adalah yang utama.</p>
+        <ul class="list-disc pl-5 mt-2 space-y-1 text-sm">
+          <li>Hubungi layanan gawat darurat: <strong>112 / 119</strong></li>
+          <li>Layanan dukungan psikologis SEJIWA: <strong>119 ext 8</strong></li>
+          <li>Bicarakan dengan orang tepercaya atau tenaga profesional sesegera mungkin.</li>
+        </ul>
+      `;
+      renderAdviceGeneric();
+    }
     return;
   }
 
@@ -257,7 +278,6 @@ function finalize() {
     </div>
   `;
 
-  // Peringatan
   $warningBlock.classList.remove("hidden");
   if (dxCode === "P005") {
     $warningBlock.innerHTML = `
@@ -279,7 +299,6 @@ function finalize() {
   renderAdviceFor(dxCode);
 }
 
-// Saran default bila tidak ada kecocokan penuh
 function renderAdviceGeneric() {
   $adviceBlock.innerHTML = `
     <h3 class="font-semibold">Saran</h3>
@@ -289,7 +308,17 @@ function renderAdviceGeneric() {
   `;
 }
 
-// Saran sesuai kesimpulan
+function renderAdviceSafe() {
+  const keepWell = [1, 2, 4, 5, 7];
+  const list = ADVICES.filter((a) => keepWell.includes(a.no));
+  $adviceBlock.innerHTML = `
+    <h3 class="font-semibold">Saran</h3>
+    <ul class="list-disc pl-5 mt-2 space-y-1">
+      ${list.map((a) => `<li>${a.text}</li>`).join("")}
+    </ul>
+  `;
+}
+
 function renderAdviceFor(dxCode) {
   const selected = ADVICE_MAP[dxCode] ?? ADVICES.map((a) => a.no);
   const list = ADVICES.filter((a) => selected.includes(a.no));
@@ -314,5 +343,4 @@ $btnRestart.addEventListener("click", () => {
   renderQuestion();
 });
 
-// Init
 renderQuestion();
