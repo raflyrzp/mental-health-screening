@@ -19,7 +19,7 @@ Catatan: Semua proses berjalan di browser pengguna (lokal), tidak mengirim data 
 - Pertanyaan Ya/Tidak tampil satu per satu (31 pertanyaan/gejala).
 - Batang progres untuk menunjukkan kemajuan pengisian.
 - Kesimpulan awal yang ditampilkan dengan bahasa non-teknis.
-- Saran praktis tanpa penomoran (ditampilkan sebagai daftar poin).
+- Saran praktis.
 - Peringatan keselamatan:
   - Banner darurat langsung muncul jika pengguna menandai pikiran/percobaan menyakiti diri saat mengisi.
   - Peringatan khusus jika hasil menunjukkan indikasi kondisi berat.
@@ -46,8 +46,6 @@ npm -v
 ## Instalasi dari GitHub
 
 1. Kloning repositori
-
-- Jika Anda sudah tahu URL repo Anda, ganti `{owner}` dan `{repo}` sesuai milik Anda.
 
 ```bash
 git clone https://github.com/raflyrzp/mental-health-screening.git
