@@ -1,8 +1,11 @@
-# Skrining Kesehatan Mental
+# Skrining Kesehatan Mental — Aplikasi Web (Vite + Tailwind)
 
 Aplikasi web sederhana untuk skrining dini kesehatan mental pada dewasa awal. Pengguna menjawab pertanyaan Ya/Tidak satu per satu. Setelah selesai, aplikasi menampilkan kesimpulan awal dan saran yang relevan. Jika ada tanda bahaya (misalnya pikiran untuk menyakiti diri atau indikasi kondisi berat), aplikasi menampilkan peringatan keselamatan.
 
-Catatan: Semua proses berjalan di browser pengguna (lokal), tidak mengirim data ke server.
+Catatan penting:
+
+- Semua proses berjalan di browser pengguna (lokal), tidak mengirim data ke server.
+- Jika tidak ada tanda yang mengkhawatirkan, pengguna akan melihat status “Kategori Aman” (mental sehat) beserta saran pemeliharaan kebiasaan baik.
 
 ---
 
@@ -17,14 +20,16 @@ Catatan: Semua proses berjalan di browser pengguna (lokal), tidak mengirim data 
 ## Fitur
 
 - Pertanyaan Ya/Tidak tampil satu per satu (31 pertanyaan/gejala).
-- Batang progres untuk menunjukkan kemajuan pengisian.
-- Kesimpulan awal yang ditampilkan dengan bahasa non-teknis.
+- Progress bar untuk menunjukkan kemajuan pengisian.
+- Kesimpulan awal.
+- Status “Kategori Aman” bila tidak ditemukan tanda yang mengkhawatirkan.
 - Saran praktis.
 - Peringatan keselamatan:
   - Banner darurat langsung muncul jika pengguna menandai pikiran/percobaan menyakiti diri saat mengisi.
   - Peringatan khusus jika hasil menunjukkan indikasi kondisi berat.
-- Privasi: seluruh proses terjadi di browser, tidak ada data yang dikirim ke server.
+- Privasi: seluruh proses terjadi di browser; tidak ada data yang dikirim ke server.
 - Tampilan menggunakan Tailwind CSS, pengembangan menggunakan Vite.
+- Arsitektur modular: data, aturan, mesin inferensi, dan UI terpisah sehingga mudah dikembangkan.
 
 ---
 
@@ -45,14 +50,14 @@ npm -v
 
 ## Instalasi dari GitHub
 
-1. Kloning repositori
+1. Kloning repositori:
 
 ```bash
 git clone https://github.com/raflyrzp/mental-health-screening.git
 cd mental-health-screening
 ```
 
-2. Instal dependensi
+2. Instal dependensi:
 
 ```bash
 npm install
@@ -69,7 +74,7 @@ npm run dev
 ```
 
 - Buka alamat yang ditampilkan di terminal (biasanya http://localhost:5173).
-- Setiap perubahan pada file sumber akan memuat ulang halaman otomatis.
+- Perubahan pada file sumber akan memuat ulang halaman otomatis.
 
 Build produksi dan pratinjau:
 
@@ -88,8 +93,9 @@ npm run preview
 2. Lanjutkan hingga pertanyaan terakhir (indikator progres akan mencapai 100%).
 3. Setelah selesai, halaman hasil menampilkan:
    - Kesimpulan awal.
-   - Saran yang relevan dengan kondisi Anda.
+   - Saran yang relevan.
    - Peringatan keselamatan jika diperlukan.
+   - Jika tidak ada tanda yang mengkhawatirkan, akan tampil status “Kategori Aman”.
 4. Gunakan tombol “Mulai Ulang” untuk mengulang pengisian dari awal.
 
 Catatan keselamatan:
@@ -103,14 +109,20 @@ Catatan keselamatan:
 
 ```
 .
-├─ index.html            # Halaman utama (memuat container aplikasi)
-├─ package.json          # Skrip npm dan dependensi
-├─ postcss.config.js     # Konfigurasi PostCSS
-├─ tailwind.config.js    # Konfigurasi Tailwind
+├─ index.html               # Halaman utama (container aplikasi)
+├─ package.json             # Skrip npm dan dependensi
+├─ postcss.config.js        # Konfigurasi PostCSS
+├─ tailwind.config.js       # Konfigurasi Tailwind
 ├─ src/
-│  ├─ main.js            # Logika aplikasi (alur pertanyaan, kesimpulan, saran)
-│  └─ style.css          # Impor dan komponen Tailwind (kelas .card, .btn, dll.)
-└─ dist/                 # Hasil build produksi (terbentuk setelah npm run build)
+│  ├─ main.js               # Orkestrasi UI, state, alur pertanyaan/hasil
+│  ├─ style.css             # Impor Tailwind dan komponen utilitas
+│  ├─ inference.js          # Mesin inferensi & deteksi tanda bahaya
+│  └─ data/
+│     ├─ symptoms.js        # Daftar pertanyaan/gejala
+│     ├─ diagnoses.js       # Nama-nama kesimpulan & tingkatannya
+│     ├─ rules.js           # Aturan pemetaan gejala → kesimpulan
+│     └─ advices.js         # Saran & pemetaan saran per kesimpulan
+└─ dist/                    # Hasil build produksi (terbentuk setelah npm run build)
 ```
 
 ---
@@ -118,47 +130,49 @@ Catatan keselamatan:
 ## Penjelasan Alur Singkat
 
 - Pertanyaan ditampilkan bergantian. Anda cukup memilih “Ya” atau “Tidak”.
-- Sistem mencermati pola jawaban yang sesuai dengan sejumlah aturan internal (logika aturan berada di kode, tidak ditampilkan ke pengguna).
+- Sistem mencermati pola jawaban berdasarkan aturan internal (logika tersimpan di kode, tidak ditampilkan ke pengguna).
 - Jika ditemukan kecocokan pola, sistem memberikan kesimpulan awal yang mudah dipahami dan saran yang sesuai.
-- Jika tidak ada pola yang cukup kuat, sistem akan menyatakan “Belum ada indikasi yang jelas” disertai saran umum.
-- Jika terdeteksi tanda bahaya, sistem menampilkan peringatan keselamatan dan informasi bantuan.
+- Jika tidak ada pola yang cukup kuat:
+  - Jika tidak ada tanda bahaya, sistem menampilkan “Kategori Aman” beserta saran pemeliharaan kebiasaan baik.
+  - Jika ada tanda bahaya, sistem menampilkan status “Perlu Perhatian” dan peringatan keselamatan.
+- Jika terdeteksi tanda bahaya yang kuat, sistem menampilkan peringatan dan informasi bantuan.
 
 ---
 
 ## Kustomisasi
 
-Anda dapat menyesuaikan teks atau aturan di file `src/main.js`:
+- Pertanyaan:
 
-- Mengubah daftar pertanyaan:
-
-  - Ubah array `SYMPTOMS` (kolom `text` adalah isi pertanyaan yang tampil ke pengguna).
+  - Ubah file `src/data/symptoms.js` (kolom `text` adalah isi pertanyaan yang tampil ke pengguna).
   - Aplikasi hanya menampilkan teks, tidak menampilkan kode internal.
 
-- Mengubah saran:
+- Saran:
 
-  - Ubah array `ADVICES` (kolom `text`).
-  - Aplikasi menampilkan daftar saran tanpa penomoran.
+  - Ubah daftar di `src/data/advices.js` (kolom `text`).
+  - Pemetaan saran per kesimpulan ada di `ADVICE_MAP` pada file yang sama.
 
-- Mengubah pemetaan saran per hasil:
+- Aturan & Kesimpulan:
 
-  - Ubah objek `ADVICE_MAP` agar kesimpulan tertentu menggunakan saran tertentu.
+  - Aturan: `src/data/rules.js`.
+  - Nama kesimpulan dan tingkatannya: `src/data/diagnoses.js`.
+  - Mesin inferensi & penentuan prioritas hasil: `src/inference.js`.
 
-- Mengubah tampilan:
+- Tampilan:
 
-  - Sesuaikan komponen Tailwind di `src/style.css` (kelas `.card`, `.btn`, `.progress`, dll.).
-  - Layout dasar ada di `index.html`.
+  - Sesuaikan komponen Tailwind di `src/style.css` (kelas `.card`, `.btn`, `.progress`, `.tag`, dll.).
+  - Struktur HTML dasar ada di `index.html`.
 
-- Mengubah teks non-teknis di hasil:
-  - Perbarui bagian penyusunan teks hasil di fungsi `finalize()` pada `src/main.js`.
-  - Pastikan tetap menggunakan bahasa yang mudah dipahami (tanpa istilah teknis).
+- Teks hasil non-teknis:
+  - Logika penyusunan tampilan hasil ada di `src/main.js` (fungsi `finalize()`).
+  - Pastikan tetap menggunakan bahasa yang mudah dipahami.
 
 ---
 
 ## Teknologi yang Digunakan
 
-- Vite (dev server cepat dan build)
-- Tailwind CSS (utility-first CSS)
-- JavaScript murni (tanpa framework)
+- Vite
+- Tailwind CSS
+- JavaScript murni
 
 ---
 
@@ -175,11 +189,11 @@ Anda dapat menyesuaikan teks atau aturan di file `src/main.js`:
 
 - Perubahan gaya tidak terlihat:
 
-  - Pastikan daftar `content` di `tailwind.config.js` sudah memuat jalur `./index.html` dan `./src/**/*.{js,ts,jsx,tsx}`.
+  - Pastikan daftar `content` di `tailwind.config.js` memuat `./index.html` dan `./src/**/*.{js,ts,jsx,tsx}`.
   - Hentikan lalu jalankan ulang `npm run dev`.
 
 - Build berhasil, tetapi halaman putih:
-  - Pastikan Anda melayani folder `dist/` dengan `npm run preview` atau server statis yang benar.
+  - Layani folder `dist/` dengan `npm run preview` atau server statis yang benar.
   - Cek konsol browser untuk melihat pesan kesalahan.
 
 ---
