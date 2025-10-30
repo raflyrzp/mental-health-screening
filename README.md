@@ -117,8 +117,7 @@ Catatan keselamatan:
 .
 ├─ index.html               # Halaman utama (container aplikasi)
 ├─ package.json             # Skrip npm dan dependensi
-├─ postcss.config.js        # Konfigurasi PostCSS
-├─ tailwind.config.js       # Konfigurasi Tailwind
+├─ vite.config.js           # Konfigurasi Vite
 ├─ src/
 │  ├─ main.js               # Orkestrasi UI, state, alur pertanyaan/hasil
 │  ├─ style.css             # Impor Tailwind dan komponen utilitas
